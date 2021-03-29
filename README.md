@@ -16,3 +16,6 @@ Copy the files to the Pico - the files in lib go in the lib folder on the Pico.
 
 The demo writes back to the serial port and updates an SH1106 OLED on I2C (GPIO0/1) but this should be
 easily disabled or switched to a SSD1306.
+
+The demo script is run with "import dht11_sh1106_demo" from the command line or by inserting it into 
+main.py and storing this on the Pico.
