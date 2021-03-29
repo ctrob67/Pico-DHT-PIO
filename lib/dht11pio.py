@@ -15,18 +15,10 @@ def SmRxEmpty(smNumber):
 
 @asm_pio(set_init=(PIO.OUT_HIGH),autopush=True, push_thresh=20) #output one byte at a time
 def DHT11():
-    # Requires 500Khz clock
+    # Requires 500Khz clock, preload x with 1000, and set pin output 0
     # Drive output low for at least 20ms to activate the device
-    label("start")
-    set(pindirs,1)
-    set(pins,0)
-
-    set(y, 9)          [7]       # 20ms delay
-    label ('outer_20ms')         # 10 * 31 * (31 + 1) / 500kHz = 20ms
-    set(x, 30)                   # (plus fine tuning for the sake of it)
-    label ('inner_20ms')
-    jmp(x_dec,'inner_20ms') [31]
-    jmp(y_dec,'outer_20ms') [5]
+    label ('delay_20ms')
+    jmp(x_dec,'delay_20ms') [9]
      
     # Look for the device response (~90us low pulse)
     # Add some delay to 'debounce' edges
@@ -66,6 +58,11 @@ class DHT11_PIO:
         SmRestart(0)
         self.sm.exec("set(x,{})".format(32 - len(DHT11[0])))
         self.sm.exec("mov(pc, x)")
+        self.sm.exec("set(pindirs,1)")
+        self.sm.exec("set(pins,0)")
+        self.sm.put(1000)
+        self.sm.exec("pull()")
+        self.sm.exec("mov(x,osr)")
 
         # Activate the state machine and then sleep until it should be complete
         self.sm.active(1)
