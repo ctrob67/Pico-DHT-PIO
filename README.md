@@ -1,4 +1,4 @@
-# Pi PICo PIO Based DHT11 Driver with Demo
+# Pi PiCo PIO Based DHT11 Driver with Demo
 
 This is a DHT11/22 driver written in micropython that uses the PIO capabaility of the Pi Pico.
 
