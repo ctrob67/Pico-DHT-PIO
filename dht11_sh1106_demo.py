@@ -2,14 +2,23 @@ import utime
 import dht11pio
 from machine import Pin, I2C
 from sh1106 import SH1106_I2C
+from scd30 import SCD30
+from si1145 import SI1145
 
+# Wait for things to stablise
+utime.sleep_ms(1000)
 
-dht = dht11pio.DHT11_PIO(data_pin = 15)
+dht = dht11pio.DHT22_PIO(data_pin = 15)
 
 i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=400000)
 display = SH1106_I2C(128, 64, i2c)
 display.rotate(True)
 display.contrast(255)
+
+#scd30 = SCD30(i2c, 0x61)
+#print(scd30.get_firmware_version())
+
+si1145 = SI1145(i2c)
 
 while True:
     display.fill(0)
@@ -25,6 +34,11 @@ while True:
         # Wait for the next one...
         print("Bad Checksum")        
         continue
-        
+
     display.show()
-    utime.sleep_ms(1000)
+    # print(scd30.read_measurement())
+    uv = si1145.read_uv
+    ir = si1145.read_ir
+    view = si1145.read_visible
+    print("UV", uv, "IR", ir, "Visible", view)
+    utime.sleep_ms(2000)
